@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Logfilter : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Logfilter</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/suwa-sh/logfilter">View on GitHub</a>
+
+          <h1 id="project_title">Logfilter</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads" style="background : url('images/icon_download.png') no-repeat 50% 90%">
+              <a class="tar_download_link" href="archive/logfilter_1.0.0_production.tar.gz">Download distribution file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>
+<a id="概要" class="anchor" href="#%E6%A6%82%E8%A6%81" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>概要</h2>
+
+<p>大容量のログファイルから、期間やログレベル、文言を指定して、必要なログイベントを抽出するCUIツールです。</p>
+
+<h2>
+<a id="機能" class="anchor" href="#%E6%A9%9F%E8%83%BD" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>機能</h2>
+
+<h3>
+<a id="ログファイルのフィルタリング" class="anchor" href="#%E3%83%AD%E3%82%B0%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E3%83%95%E3%82%A3%E3%83%AB%E3%82%BF%E3%83%AA%E3%83%B3%E3%82%B0" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ログファイルのフィルタリング</h3>
+
+<p>指定のログフォーマットで出力されているログファイルから
+期間、ログレベル、文字列、正規表現 を指定して、マッチするログイベントだけのファイルを作成します。</p>
+
+<ul>
+<li>
+<p>対応しているログフォーマット</p>
+
+<ul>
+<li>
+<p>apache access log形式</p>
+
+<ul>
+<li>
+<p>サンプル</p>
+
+<pre><code>127.0.0.1 - name [10/Oct/2000:13:55:36 +0900] "GET /apache_pb.gif HTTP/1.0" 200 2326
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>「タイムスタンプ ログレベル メッセージ」形式</p>
+
+<ul>
+<li>タイムスタンプ
+
+<ul>
+<li>日付
+
+<ul>
+<li>「yyyy/MM/dd」, 「yy/MM/dd」</li>
+<li>「yyyy-MM-dd」, 「yy-MM-dd」</li>
+<li>「yyyyMMdd」</li>
+</ul>
+</li>
+<li>日付時刻セパレータ
+
+<ul>
+<li>「 （半角スペース）」</li>
+<li>「T」</li>
+</ul>
+</li>
+<li>時刻
+
+<ul>
+<li>「なし」</li>
+<li>「HH:mm」, 「HH:mm:ss」</li>
+<li>「HH:mm:ss.SSS」, 「HH:mm:ss,SSS」</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>タイムゾーン
+
+<ul>
+<li>「なし」</li>
+<li>「+0900」</li>
+<li>「+0900:」</li>
+</ul>
+</li>
+<li>ログレベル
+
+<ul>
+<li>前提
+
+<ul>
+<li>タイムスタンプとの区切りが「半角スペース」</li>
+<li>ログレベルを「半角スペース」か「大カッコ」でくくっている</li>
+</ul>
+</li>
+<li>形式
+
+<ul>
+<li>任意（TRACE～ERROR、FINEST〜FATAL etc）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>サンプル</p>
+
+<pre><code>2016-11-06 12:17:53.985 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START validate
+2016-11-06 12:17:54.022 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   validate
+2016-11-06 12:17:54.022 ERROR 15765 [      main] m.s.t.l.s.LogFilterServiceTest : [error.validate]妥当性チェックエラーが発生しました。
+LogFilterServiceInput.timeFilterValueFrom:日時に変換できません。 設定値=unmatched date format
+LogFilterServiceInput.outputCharset:サポートされていない文字コードです。 設定値=NotExist2
+LogFilterServiceInput.inputCharset:サポートされていない文字コードです。 設定値=NotExist
+LogFilterServiceInput.inputFilePath:存在しないパスです。 設定値=/path/to/input
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<h2>
+<a id="環境構築手順" class="anchor" href="#%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89%E6%89%8B%E9%A0%86" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>環境構築手順</h2>
+
+<ul>
+<li>配布アーカイブ（tar.gz）を、ログファイルが配置されているサーバの任意のディレクトリに展開</li>
+</ul>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c1">cd</span> <span class="pl-smi">${LOGFILTER_PARENT_DIR}</span>
+tar xvfz ./logfilter<span class="pl-k">*</span>.tar.gz</pre></div>
+
+<ul>
+<li>Linux系OSの場合、下記のコマンドでshellに実行権限を付与</li>
+</ul>
+
+<div class="highlight highlight-source-shell"><pre>chmod 755 <span class="pl-smi">${LOGFILTER_ROOT}</span>/bin/<span class="pl-k">*</span>.sh</pre></div>
+
+<h2>
+<a id="ヘルプ" class="anchor" href="#%E3%83%98%E3%83%AB%E3%83%97" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ヘルプ</h2>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-smi">${LOGFILTER_ROOT}</span>/bin/logfilter.sh -h</pre></div>
+
+<h2>
+<a id="tips" class="anchor" href="#tips" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tips</h2>
+
+<ol>
+<li>
+<p>設定をまとめたファイルを指定＋コマンドで上書きして実行することができます。
+下記のように、ルーティン作業を簡素化することも可能です。</p>
+
+<ul>
+<li>設定ファイルで ログレベル：WARN以上 に絞る設定をしておき、コマンドで対象ログファイルを指定する</li>
+<li>設定ファイルで 対象ログファイル を指定しておき、コマンドで期間を今日に絞る</li>
+</ul>
+</li>
+<li><p>特定の絞り込み条件を指定したコマンドをalias登録しておき、パスだけ指定して動かすこともできます。</p></li>
+</ol>
+
+<h2>
+<a id="前提" class="anchor" href="#%E5%89%8D%E6%8F%90" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>前提</h2>
+
+<ul>
+<li>JRE 1.6 ~</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Logfilter maintained by <a href="https://github.com/suwa-sh">suwa-sh</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+
+
+  </body>
+</html>
