@@ -1,0 +1,59 @@
+2016-11-06 12:17:52.843 DEBUG 15765 [      main] m.s.t.l.m.LogFilter            : 主処理の実行中...
+2016-11-06 12:17:52.847 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START validate
+2016-11-06 12:17:52.873 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   validate
+2016-11-06 12:17:52.876 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START preExecute
+2016-11-06 12:17:52.890 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   preExecute
+2016-11-06 12:17:52.890 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START mainExecute
+2016-11-06 12:17:52.891 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START validate
+2016-11-06 12:17:52.914 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   validate
+2016-11-06 12:17:52.914 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START preExecute
+2016-11-06 12:17:52.914 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   preExecute
+2016-11-06 12:17:52.914 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START mainExecute
+2016-11-06 12:17:52.915  INFO 15765 [      main] m.s.t.l.s.LogFilterService     : ・入力ファイル
+2016-11-06 12:17:52.915  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :     ・パス      : src/test/scripts/logfilter/input/chbil.log
+2016-11-06 12:17:52.915  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :     ・文字コード: UTF-8
+2016-11-06 12:17:52.915  INFO 15765 [      main] m.s.t.l.s.LogFilterService     : ・出力ファイル
+2016-11-06 12:17:52.916  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :     ・パス      : src/test/scripts/logfilter/actual/chbil.log_time_from-to
+2016-11-06 12:17:52.916  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :     ・文字コード: UTF-8
+2016-11-06 12:17:52.917  INFO 15765 [      main] m.s.t.l.s.LogFilterService     : ・フィルタ設定
+2016-11-06 12:17:52.917  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :     ・TimeFilter
+2016-11-06 12:17:52.917  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :         ・From : 2015-02-24 09:29:22.649
+2016-11-06 12:17:52.918  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :         ・To   : 2015/02/24 09:29:23
+2016-11-06 12:17:52.918  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :     ・LogLevelFilter
+2016-11-06 12:17:52.918  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :         ・Value: []
+2016-11-06 12:17:52.918  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :     ・StringContentFilter
+2016-11-06 12:17:52.918  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :         ・Value:
+2016-11-06 12:17:52.918  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :     ・RegexFilter
+2016-11-06 12:17:52.919  INFO 15765 [      main] m.s.t.l.s.LogFilterService     :         ・Value:
+2016-11-06 12:17:53.135 TRACE 15765 [      main] m.s.t.l.s.LogFilterService     : 10000 行目：メモリ情報:Max=228MB, Total=164MB, Used=9MB [5.5%]
+2016-11-06 12:17:53.309 TRACE 15765 [      main] m.s.t.l.s.LogFilterService     : 20000 行目：メモリ情報:Max=228MB, Total=162MB, Used=82MB [50.6%]
+2016-11-06 12:17:53.467 TRACE 15765 [      main] m.s.t.l.s.LogFilterService     : 30000 行目：メモリ情報:Max=228MB, Total=155MB, Used=14MB [9.0%]
+2016-11-06 12:17:53.621 TRACE 15765 [      main] m.s.t.l.s.LogFilterService     : 40000 行目：メモリ情報:Max=228MB, Total=170MB, Used=14MB [8.2%]
+2016-11-06 12:17:53.762 TRACE 15765 [      main] m.s.t.l.s.LogFilterService     : 50000 行目：メモリ情報:Max=228MB, Total=170MB, Used=83MB [48.8%]
+2016-11-06 12:17:53.853 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   mainExecute
+2016-11-06 12:17:53.853 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START postExecute
+2016-11-06 12:17:53.853 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   postExecute
+2016-11-06 12:17:53.853 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   mainExecute
+2016-11-06 12:17:53.853 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START postExecute
+2016-11-06 12:17:53.853 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   postExecute
+2016-11-06 12:17:53.862 DEBUG 15765 [      main] m.s.t.DefaultTestWatcher       : ◼◼ LogFilterServiceTest#test Started.
+2016-11-06 12:17:53.862 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START validate
+2016-11-06 12:17:53.929 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   validate
+2016-11-06 12:17:53.982 ERROR 15765 [      main] m.s.t.l.s.LogFilterServiceTest : [error.validate]妥当性チェックエラーが発生しました。
+LogFilterServiceInput.inputFilePath:値が設定されていません。 設定値=null
+LogFilterServiceInput.inputCharset:値が設定されていません。 設定値=null
+LogFilterServiceInput.outputCharset:値が設定されていません。 設定値=null
+LogFilterServiceInput.outputFilePath:値が設定されていません。 設定値=null
+
+2016-11-06 12:17:53.982 DEBUG 15765 [      main] m.s.t.DefaultTestWatcher       : ◼◼ LogFilterServiceTest#test Scceeded.
+2016-11-06 12:17:53.984 DEBUG 15765 [      main] m.s.t.DefaultTestWatcher       : ◼◼ LogFilterServiceTest#test2 Started.
+2016-11-06 12:17:53.985 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START validate
+2016-11-06 12:17:53.999 WARN  15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : 警告メッセージ
+2016-11-06 12:17:54.022 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   validate
+2016-11-06 12:17:54.022 ERROR 15765 [      main] m.s.t.l.s.LogFilterServiceTest : [error.validate]妥当性チェックエラーが発生しました。
+LogFilterServiceInput.timeFilterValueFrom:日時に変換できません。 設定値=unmatched date format
+LogFilterServiceInput.outputCharset:サポートされていない文字コードです。 設定値=NotExist2
+LogFilterServiceInput.inputCharset:サポートされていない文字コードです。 設定値=NotExist
+LogFilterServiceInput.inputFilePath:存在しないパスです。 設定値=/path/to/input
+
+2016-11-06 12:17:54.022 DEBUG 15765 [      main] m.s.t.DefaultTestWatcher       : ◼◼ LogFilterServiceTest#test2 Scceeded.

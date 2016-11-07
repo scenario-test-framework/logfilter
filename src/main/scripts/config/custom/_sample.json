@@ -1,0 +1,12 @@
+{
+    "inputFilePath" : "/path/to/inputFile",
+    "inputCharset" : "UTF-8",
+    "outputDir" : "/path/to/outputDir",
+    "timeFilterValueFrom" : "2015/01/01 00:00:00.001",
+    "timeFilterValueTo" : "2015-01-01 23:59:59",
+    "logLevelFilterValueList" : [
+        "TRACE", "DEBUG", "INFO", "WARN", "ERROR"
+    ],
+    "stringContentFilterValue" : "payments06030Flow",
+    "regexFilterValue" : "payments\d{5}Flow"
+}

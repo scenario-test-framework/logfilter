@@ -1,0 +1,6 @@
+{
+    "inputCharset" : "utf8",
+    "logLevelFilterValueList" : [
+        "INFO", "WARN", "ERROR"
+    ]
+}
