@@ -17,9 +17,8 @@
         * サンプル
 
             ```
-127.0.0.1 - name [10/Oct/2000:13:55:36 +0900] "GET /apache_pb.gif HTTP/1.0" 200 2326
+            127.0.0.1 - name [10/Oct/2000:13:55:36 +0900] "GET /apache_pb.gif HTTP/1.0" 200 2326
             ```
-
 
     * 「タイムスタンプ ログレベル メッセージ」形式
         * タイムスタンプ
@@ -47,36 +46,38 @@
         * サンプル
 
             ```
-2016-11-06 12:17:53.985 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START validate
-2016-11-06 12:17:54.022 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   validate
-2016-11-06 12:17:54.022 ERROR 15765 [      main] m.s.t.l.s.LogFilterServiceTest : [error.validate]妥当性チェックエラーが発生しました。
-LogFilterServiceInput.timeFilterValueFrom:日時に変換できません。 設定値=unmatched date format
-LogFilterServiceInput.outputCharset:サポートされていない文字コードです。 設定値=NotExist2
-LogFilterServiceInput.inputCharset:サポートされていない文字コードです。 設定値=NotExist
-LogFilterServiceInput.inputFilePath:存在しないパスです。 設定値=/path/to/input
+            2016-11-06 12:17:53.985 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START validate
+            2016-11-06 12:17:54.022 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   validate
+            2016-11-06 12:17:54.022 ERROR 15765 [      main] m.s.t.l.s.LogFilterServiceTest : [error.validate]妥当性チェックエラーが発生しました。
+            LogFilterServiceInput.timeFilterValueFrom:日時に変換できません。 設定値=unmatched date format
+            LogFilterServiceInput.outputCharset:サポートされていない文字コードです。 設定値=NotExist2
+            LogFilterServiceInput.inputCharset:サポートされていない文字コードです。 設定値=NotExist
+            LogFilterServiceInput.inputFilePath:存在しないパスです。 設定値=/path/to/input
             ```
-
 
 ## 環境構築手順
 
 * 配布アーカイブ（tar.gz）を、ログファイルが配置されているサーバの任意のディレクトリに展開
 
 ``` sh
-cd ${LOGFILTER_PARENT_DIR}
-tar xvfz ./logfilter*.tar.gz
-```
+# 配置ディレクトリで展開
+cd ${DIR_PARENT}
+tar xvfz ./logfilter_*.tar.gz
+rm -f ./logfilter_*.tar.gz
 
-* Linux系OSの場合、下記のコマンドでshellに実行権限を付与
+# 最新版にシンボリックリンクを作成
+ln -s ${DIR_PARENT}/logfilter_${VERSION} ${DIR_PARENT}/logfilter
 
-``` sh
-chmod 755 ${LOGFILTER_ROOT}/bin/*.sh
+# 実行権限を付与
+chmod 755 ./logfilter/bin/*.sh
 ```
 
 
 ## ヘルプ
 
 ``` sh
-${LOGFILTER_ROOT}/bin/logfilter.sh -h
+cd ${DIR_PARENT}
+./logfilter/bin/logfilter.sh -h
 ```
 
 
