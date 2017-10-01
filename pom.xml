@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>logfilter</artifactId>
     <version>1.0.0</version>
-    <name>Log Filter</name>
+    <name>logfilter</name>
 
     <parent>
         <groupId>me.suwash.commons</groupId>
