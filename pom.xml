@@ -362,16 +362,16 @@
     </reporting>
 
     <scm>
-        <url>https://github.com/suwa-sh/logfilter</url>
-        <connection>scm:git:git://github.com/suwa-sh/logfilter.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/suwa-sh/logfilter.git</developerConnection>
+        <url>https://github.com/scenario-test-framework/logfilter</url>
+        <connection>scm:git:git://github.com/scenario-test-framework/logfilter.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/scenario-test-framework/logfilter.git</developerConnection>
     </scm>
     <organization>
-        <url>https://suwa-sh.github.io/logfilter</url>
-        <name>Private</name>
+        <url>https://scenario-test-framework.github.io/logfilter</url>
+        <name>scenario-test-framework</name>
     </organization>
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/suwa-sh/logfilter/issues</url>
+        <url>https://github.com/scenario-test-framework/logfilter/issues</url>
     </issueManagement>
 </project>
