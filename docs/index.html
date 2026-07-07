@@ -12,16 +12,6 @@
 		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
-
-		<!-- Global site tag (gtag.js) - Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-101676424-2"></script>
-		<script>
-		  window.dataLayer = window.dataLayer || [];
-		  function gtag(){dataLayer.push(arguments);}
-		  gtag('js', new Date());
-
-		  gtag('config', 'UA-101676424-2');
-		</script>
 	</head>
 	<body class="landing">
 		<div id="page-wrapper">
@@ -67,6 +57,8 @@
 							</h2>
 							<p>
 								期間やログレベル、文言などの条件を指定して抽出できます。
+								<br />
+								Go製のシングルバイナリで、JREなどのランタイムは不要です。
 							</p>
 						</header>
 						<span class="image featured"><img src="images/pic01.jpg" alt="" /></span>
@@ -144,29 +136,30 @@
 								<h2>Getting Started</h2>
 
 								<h3>デプロイ</h3>
-								<p>解凍して、権限を付与すればすぐに利用できます。</p>
+								<p>シングルバイナリなので、解凍して配置するだけで利用できます。</p>
 								<pre>
-# 配置ディレクトリで展開
-cd ${DIR_PARENT}
+# 展開して、PATHの通ったディレクトリに配置
 tar xvfz ./logfilter_*.tar.gz
-rm -f ./logfilter_*.tar.gz
-
-# 最新版にシンボリックリンクを作成
-ln -s ${DIR_PARENT}/logfilter_${VERSION} ${DIR_PARENT}/logfilter
-
-# 実行権限を付与
-chmod 755 ./logfilter/bin/*.sh
+mv ./logfilter_*/logfilter /usr/local/bin/
+</pre>
+								<p>Dockerでも実行できます。</p>
+								<pre>
+docker pull ghcr.io/scenario-test-framework/logfilter:latest
 </pre>
 
 								<h3>実行</h3>
 								<p>ここでは、抽出開始時刻を指定して実行してみます。詳細な起動方法はヘルプを参照して下さい。</p>
 								<pre>
 # アクセスログの 2017/01/01 00:00:00 以降のログイベントを /tmp に出力
-cd ./logfilter/bin/
-./logfilter.sh -tf "2017-01-01 00:00:00" /path/to/access_log /tmp/filtered_access_log
+logfilter -tf "2017-01-01 00:00:00" /path/to/access_log /tmp/filtered_access_log
 
 # helpを表示
-./logfilter.sh -h
+logfilter -h
+
+# Dockerの場合
+docker run --rm -u "$(id -u):$(id -g)" -e TZ=Asia/Tokyo -v "$PWD:/work" \
+    ghcr.io/scenario-test-framework/logfilter:latest \
+    -tf "2017-01-01 00:00:00" /work/access_log /work/filtered_access_log
 </pre>
 
 							</section>

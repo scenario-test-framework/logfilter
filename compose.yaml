@@ -1,0 +1,19 @@
+# logfilter を docker compose で実行するための定義。
+#
+# 使い方:
+#   # ./logs 配下のログファイルをフィルタリング
+#   docker compose run --rm logfilter -l 'WARN,ERROR' /work/logs/app.log /work/logs/filtered.log
+#
+#   # ヘルプ
+#   docker compose run --rm logfilter --help
+services:
+  logfilter:
+    image: ghcr.io/scenario-test-framework/logfilter:latest
+    build: .
+    environment:
+      # タイムゾーンなしのタイムスタンプ (yyyy-MM-dd HH:mm:ss 等) の解釈に使用します。
+      # 未指定の場合は UTC として解釈されます。
+      TZ: Asia/Tokyo
+    volumes:
+      # ログファイルの配置ディレクトリをマウントして利用してください
+      - ./logs:/work/logs

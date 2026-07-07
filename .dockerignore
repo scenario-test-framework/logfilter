@@ -1,0 +1,9 @@
+.git
+.github
+dist/
+logfilter
+testdata/actual/
+*.md
+LICENSE
+Makefile
+compose.yaml
