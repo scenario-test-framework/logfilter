@@ -8,30 +8,31 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="logfilter — 必要なログだけ、瞬時に。">
     <meta property="og:description" content="大容量ログから必要なイベントを抽出する、Go製のオープンソースCLI。">
+    <meta property="og:locale" content="ja_JP">
     <meta property="og:image" content="https://scenario-test-framework.github.io/logfilter/assets/social-preview.png">
     <meta property="og:url" content="https://scenario-test-framework.github.io/logfilter/">
     <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://scenario-test-framework.github.io/logfilter/">
     <title>logfilter — 必要なログだけ、瞬時に。</title>
-    <link rel="icon" href="images/pic05.jpg">
-    <link rel="stylesheet" href="assets/css/site.css">
-    <script src="assets/js/site.js" defer></script>
+    <link rel="stylesheet" href="assets/css/site.css?v=20260711-6">
+    <script src="assets/js/site.js?v=20260711-6" defer></script>
   </head>
   <body>
-    <a class="skip-link" href="#main" data-ja="本文へ移動" data-en="Skip to content">本文へ移動</a>
+    <a class="skip-link" href="#main" data-i18n="skipLink">本文へ移動</a>
 
     <header class="site-header">
       <div class="shell header-inner">
         <a class="brand" href="#top" aria-label="logfilter home"><span>log</span><strong>filter</strong></a>
-        <nav class="primary-nav" aria-label="メインナビゲーション" data-aria-ja="メインナビゲーション" data-aria-en="Primary navigation">
-          <a href="#features" data-ja="機能" data-en="Features">機能</a>
-          <a href="#workflow" data-ja="使い方" data-en="Usage">使い方</a>
-          <a href="#install" data-ja="導入" data-en="Install">導入</a>
+        <nav class="primary-nav" aria-label="メインナビゲーション" data-i18n-aria="primaryNav">
+          <a href="#features" data-i18n="navFeatures">機能</a>
+          <a href="#workflow" data-i18n="navUsage">使い方</a>
+          <a href="#install" data-i18n="navInstall">導入</a>
           <a href="https://github.com/scenario-test-framework/logfilter">GitHub</a>
         </nav>
-        <div class="language-switch" role="group" aria-label="表示言語" data-aria-ja="表示言語" data-aria-en="Display language">
-          <button type="button" data-lang-button="ja" aria-pressed="true">JA</button>
+        <div class="language-switch" role="group" aria-label="表示言語" data-i18n-aria="languageGroup">
+          <button type="button" data-lang-button="ja" data-i18n-aria="switchJapanese" aria-label="日本語を選択" aria-pressed="true">JA</button>
           <span aria-hidden="true">/</span>
-          <button type="button" data-lang-button="en" aria-pressed="false">EN</button>
+          <button type="button" data-lang-button="en" data-i18n-aria="switchEnglish" aria-label="英語を選択" aria-pressed="false">EN</button>
         </div>
       </div>
     </header>
@@ -43,23 +44,23 @@
           <div class="hero-copy">
             <p class="eyebrow">OPEN SOURCE CLI · GO</p>
             <h1 id="hero-title">
-              <span data-ja="必要なログだけ、" data-en="Find the logs">必要なログだけ、</span>
-              <strong data-ja="瞬時に。" data-en="that matter. Instantly.">瞬時に。</strong>
+              <span data-i18n="heroTitleLine1">必要なログだけ</span>
+              <strong data-i18n="heroTitleLine2">瞬時に</strong>
             </h1>
-            <p class="hero-lead" data-ja="大容量ログから、期間・レベル・文字列・正規表現で必要なイベントを抽出。スタックトレースもひとつのイベントとして保持します。" data-en="Extract the events you need from large log files by time range, level, text, or regular expression. Multiline stack traces stay together.">大容量ログから、期間・レベル・文字列・正規表現で必要なイベントを抽出。スタックトレースもひとつのイベントとして保持します。</p>
+            <p class="hero-lead" data-i18n="heroLead">大容量ログから、期間・レベル・文字列・正規表現で必要なイベントを抽出。スタックトレースもひとつのイベントとして保持します。</p>
             <div class="hero-actions">
-              <a class="button button-primary" href="#install" data-ja="今すぐ使う" data-en="Get started">今すぐ使う</a>
-              <a class="button button-secondary" href="https://github.com/scenario-test-framework/logfilter" data-ja="GitHubを見る" data-en="View on GitHub">GitHubを見る</a>
+              <a class="button button-primary" href="#install" data-i18n="getStarted">今すぐ使う</a>
+              <a class="button button-secondary" href="https://github.com/scenario-test-framework/logfilter" data-i18n="viewGithub">GitHubを見る</a>
             </div>
             <dl class="hero-stats">
-              <div><dt data-ja="配布形式" data-en="Distribution">配布形式</dt><dd data-ja="単一バイナリ" data-en="Single binary">単一バイナリ</dd></div>
-              <div><dt data-ja="イベント" data-en="Events">イベント</dt><dd data-ja="マルチライン対応" data-en="Multiline aware">マルチライン対応</dd></div>
-              <div><dt data-ja="文字コード" data-en="Encodings">文字コード</dt><dd>UTF-8 / Shift_JIS</dd></div>
+              <div><dt data-i18n="distributionLabel">配布形式</dt><dd data-i18n="distributionValue">単一バイナリ</dd></div>
+              <div><dt data-i18n="eventsLabel">イベント</dt><dd data-i18n="eventsValue">マルチライン対応</dd></div>
+              <div><dt data-i18n="encodingsLabel">文字コード</dt><dd>UTF-8 / Shift_JIS</dd></div>
             </dl>
           </div>
 
           <figure class="filter-demo">
-            <figcaption class="sr-only" data-ja="大量のログから条件に合うイベントを抽出する logfilter の実行例" data-en="Example of logfilter extracting matching events from a large log stream">大量のログから条件に合うイベントを抽出する logfilter の実行例</figcaption>
+            <figcaption class="sr-only" data-i18n="demoCaption">大量のログから条件に合うイベントを抽出する logfilter の実行例</figcaption>
             <div class="stream stream-input" aria-hidden="true">
               <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
             </div>
@@ -73,8 +74,8 @@
               <div class="terminal-bar"><span></span><span></span><span></span><b>FILTER PREVIEW</b></div>
               <pre><code><em>$</em> logfilter -l <mark>'WARN,ERROR'</mark> app.log filtered.log
 
-<span>✓</span> <b data-ja="2,418,920 行を処理" data-en="2,418,920 lines processed">2,418,920 行を処理</b>
-<span>✓</span> <b data-ja="126 イベントを抽出" data-en="126 events extracted">126 イベントを抽出</b></code></pre>
+<span>✓</span> <b data-i18n="demoFilter">ログレベル: WARN, ERROR</b>
+<span>✓</span> <b data-i18n="demoOutput">出力: filtered.log</b></code></pre>
             </div>
           </figure>
         </div>
@@ -84,44 +85,44 @@
       <section class="section section-intro" aria-labelledby="intro-title">
         <div class="shell narrow">
           <p class="section-number">01 / VALUE</p>
-          <h2 id="intro-title" data-ja="ログ調査のノイズを、判断できる情報に。" data-en="Turn log noise into actionable evidence.">ログ調査のノイズを、判断できる情報に。</h2>
-          <p class="section-lead" data-ja="巨大なファイルをエディタで開き、検索を繰り返し、スタックトレースを手作業で追う必要はありません。logfilter はイベントのまとまりを保ったまま、調査に必要な部分だけを小さなファイルへ切り出します。" data-en="Stop opening huge files, repeating searches, and reconstructing stack traces by hand. logfilter keeps each event intact and writes only the evidence you need to a smaller file.">巨大なファイルをエディタで開き、検索を繰り返し、スタックトレースを手作業で追う必要はありません。logfilter はイベントのまとまりを保ったまま、調査に必要な部分だけを小さなファイルへ切り出します。</p>
+          <h2 id="intro-title" data-i18n="introTitle">ログ調査のノイズを、判断できる情報に。</h2>
+          <p class="section-lead" data-i18n="introLead">巨大なファイルをエディタで開き、検索を繰り返し、スタックトレースを手作業で追う必要はありません。logfilter はイベントのまとまりを保ったまま、調査に必要な部分だけを小さなファイルへ切り出します。</p>
         </div>
       </section>
 
       <section class="section" id="features" aria-labelledby="features-title">
         <div class="shell">
           <div class="section-heading">
-            <div><p class="section-number">02 / FEATURES</p><h2 id="features-title" data-ja="調査に必要な機能を、ひとつのCLIに。" data-en="Everything you need in one focused CLI.">調査に必要な機能を、ひとつのCLIに。</h2></div>
-            <p data-ja="複数の条件は AND で組み合わせられます。広いログから、調べたい事象へ段階的に絞り込めます。" data-en="Combine filters with AND logic to move from a large log file to the exact events you need.">複数の条件は AND で組み合わせられます。広いログから、調べたい事象へ段階的に絞り込めます。</p>
+            <div><p class="section-number">02 / FEATURES</p><h2 id="features-title" data-i18n="featuresTitle">調査に必要な機能を、ひとつのCLIに。</h2></div>
+            <p data-i18n="featuresLead">複数の条件は AND で組み合わせられます。広いログから、調べたい事象へ段階的に絞り込めます。</p>
           </div>
           <div class="feature-grid">
             <article class="feature-card feature-wide">
               <span class="feature-index">01</span>
               <div class="feature-icon" aria-hidden="true">◷</div>
-              <h3 data-ja="期間で切り出す" data-en="Filter by time range">期間で切り出す</h3>
-              <p data-ja="開始・終了時刻を指定し、障害発生前後のログだけを抽出。From は含み、To は含まない明確な境界です。" data-en="Extract only the events around an incident. The start time is inclusive and the end time is exclusive.">開始・終了時刻を指定し、障害発生前後のログだけを抽出。From は含み、To は含まない明確な境界です。</p>
+              <h3 data-i18n="timeTitle">期間で切り出す</h3>
+              <p data-i18n="timeBody">開始・終了時刻を指定し、障害発生前後のログだけを抽出。From は含み、To は含まない明確な境界です。</p>
               <code>-tf '12:00' -tt '12:30'</code>
             </article>
             <article class="feature-card">
               <span class="feature-index">02</span>
               <div class="feature-icon warn" aria-hidden="true">!</div>
-              <h3 data-ja="レベルで絞る" data-en="Select log levels">レベルで絞る</h3>
-              <p data-ja="WARN、ERROR、FATAL など、必要なログレベルだけをまとめて指定できます。" data-en="Include only the levels you need, such as WARN, ERROR, or FATAL.">WARN、ERROR、FATAL など、必要なログレベルだけをまとめて指定できます。</p>
+              <h3 data-i18n="levelTitle">レベルで絞る</h3>
+              <p data-i18n="levelBody">WARN、ERROR、FATAL など、必要なログレベルだけをまとめて指定できます。</p>
               <code>-l 'WARN,ERROR'</code>
             </article>
             <article class="feature-card">
               <span class="feature-index">03</span>
               <div class="feature-icon" aria-hidden="true">T</div>
-              <h3 data-ja="内容を探す" data-en="Search event content">内容を探す</h3>
-              <p data-ja="固定文字列の部分一致で、例外名やユーザーIDなどをイベント全体から検索します。" data-en="Find exception names, user IDs, and other text anywhere in an event.">固定文字列の部分一致で、例外名やユーザーIDなどをイベント全体から検索します。</p>
+              <h3 data-i18n="contentTitle">内容を探す</h3>
+              <p data-i18n="contentBody">固定文字列の部分一致で、例外名やユーザーIDなどをイベント全体から検索します。</p>
               <code>-s 'Exception'</code>
             </article>
             <article class="feature-card feature-wide">
               <span class="feature-index">04</span>
               <div class="feature-icon" aria-hidden="true">/.*/</div>
-              <h3 data-ja="パターンで抽出する" data-en="Match patterns">パターンで抽出する</h3>
-              <p data-ja="RE2 正規表現で複数の文言やパターンをまとめて指定。安全で予測可能な検索を実行できます。" data-en="Use RE2 regular expressions to match several messages or patterns with predictable performance.">RE2 正規表現で複数の文言やパターンをまとめて指定。安全で予測可能な検索を実行できます。</p>
+              <h3 data-i18n="regexTitle">パターンで抽出する</h3>
+              <p data-i18n="regexBody">RE2 正規表現で複数の文言やパターンをまとめて指定。安全で予測可能な検索を実行できます。</p>
               <code>-r 'ERROR|Exception'</code>
             </article>
           </div>
@@ -131,23 +132,23 @@
       <section class="section section-workflow" id="workflow" aria-labelledby="workflow-title">
         <div class="shell">
           <div class="section-heading">
-            <div><p class="section-number">03 / WORKFLOW</p><h2 id="workflow-title" data-ja="準備して、絞って、確認する。" data-en="Prepare. Filter. Inspect.">準備して、絞って、確認する。</h2></div>
-            <p data-ja="いつものログ調査を3ステップに。入力ファイルはそのまま、結果だけを別ファイルで受け取れます。" data-en="A three-step workflow for everyday investigations. Keep the source untouched and inspect a focused output file.">いつものログ調査を3ステップに。入力ファイルはそのまま、結果だけを別ファイルで受け取れます。</p>
+            <div><p class="section-number">03 / WORKFLOW</p><h2 id="workflow-title" data-i18n="workflowTitle">準備して、絞って、確認する</h2></div>
+            <p data-i18n="workflowLead">いつものログ調査を3ステップに。入力ファイルはそのまま、結果だけを別ファイルで受け取れます。</p>
           </div>
           <ol class="workflow-list">
             <li>
               <span>01</span>
-              <div><h3 data-ja="ログを用意" data-en="Prepare a log">ログを用意</h3><p data-ja="Apache access log、またはタイムスタンプで始まるアプリケーションログを指定します。" data-en="Choose an Apache access log or an application log whose events start with timestamps.">Apache access log、またはタイムスタンプで始まるアプリケーションログを指定します。</p></div>
+              <div><h3 data-i18n="prepareTitle">ログを用意</h3><p data-i18n="prepareBody">Apache access log、またはタイムスタンプで始まるアプリケーションログを指定します。</p></div>
               <code>./app.log</code>
             </li>
             <li>
               <span>02</span>
-              <div><h3 data-ja="条件を指定" data-en="Choose filters">条件を指定</h3><p data-ja="期間、レベル、文字列、正規表現を、調査したい事象に合わせて組み合わせます。" data-en="Combine time, level, text, and regex filters for the incident you are investigating.">期間、レベル、文字列、正規表現を、調査したい事象に合わせて組み合わせます。</p></div>
+              <div><h3 data-i18n="chooseTitle">条件を指定</h3><p data-i18n="chooseBody">期間、レベル、文字列、正規表現を、調査したい事象に合わせて組み合わせます。</p></div>
               <code>-l 'WARN,ERROR'</code>
             </li>
             <li>
               <span>03</span>
-              <div><h3 data-ja="結果を確認" data-en="Inspect the result">結果を確認</h3><p data-ja="マッチしたイベントと、そのスタックトレースを含む継続行が出力されます。" data-en="Review matching events with all continuation lines, including stack traces, intact.">マッチしたイベントと、そのスタックトレースを含む継続行が出力されます。</p></div>
+              <div><h3 data-i18n="inspectTitle">結果を確認</h3><p data-i18n="inspectBody">マッチしたイベントと、そのスタックトレースを含む継続行が出力されます。</p></div>
               <code>./filtered.log</code>
             </li>
           </ol>
@@ -158,14 +159,14 @@
         <div class="shell formats-layout">
           <div class="formats-copy">
             <p class="section-number">04 / COMPATIBILITY</p>
-            <h2 id="formats-title" data-ja="現場のログを、そのまま扱う。" data-en="Works with the logs you already have.">現場のログを、そのまま扱う。</h2>
-            <p data-ja="一般的なタイムスタンプ形式と、日本語環境で使われる文字コードに対応。変換作業を挟まず調査を始められます。" data-en="Support for common timestamp formats and Japanese encodings lets you investigate without a conversion step.">一般的なタイムスタンプ形式と、日本語環境で使われる文字コードに対応。変換作業を挟まず調査を始められます。</p>
-            <a class="text-link" href="https://github.com/scenario-test-framework/logfilter/blob/master/README.ja.md" data-href-ja="https://github.com/scenario-test-framework/logfilter/blob/master/README.ja.md" data-href-en="https://github.com/scenario-test-framework/logfilter/blob/master/README.md" data-ja="対応形式を詳しく見る →" data-en="See all supported formats →">対応形式を詳しく見る →</a>
+            <h2 id="formats-title" data-i18n="formatsTitle">現場のログを、そのまま扱う。</h2>
+            <p data-i18n="formatsLead">一般的なタイムスタンプ形式と、日本語環境で使われる文字コードに対応。変換作業を挟まず調査を始められます。</p>
+            <a class="text-link" href="https://github.com/scenario-test-framework/logfilter/blob/master/README.ja.md" data-i18n="formatsLink" data-i18n-href="docsUrl">対応形式を詳しく見る →</a>
           </div>
           <div class="compatibility-panel">
-            <div><span data-ja="ログ形式" data-en="Log formats">ログ形式</span><strong>Apache access log</strong><strong>Timestamp + level + message</strong></div>
-            <div><span data-ja="文字コード" data-en="Encodings">文字コード</span><strong>UTF-8 · Shift_JIS · EUC-JP</strong><strong>ISO-2022-JP · UTF-16</strong></div>
-            <div><span data-ja="実行環境" data-en="Platforms">実行環境</span><strong>Linux · macOS · Windows</strong><strong>Docker · amd64 · arm64</strong></div>
+            <div><span data-i18n="formatsLabel">ログ形式</span><strong>Apache access log</strong><strong>Timestamp + level + message</strong></div>
+            <div><span data-i18n="encodingsLabel">文字コード</span><strong>UTF-8 · Shift_JIS · EUC-JP</strong><strong>ISO-2022-JP · UTF-16</strong></div>
+            <div><span data-i18n="platformsLabel">実行環境</span><strong>Linux · macOS · Windows</strong><strong>Docker · amd64 · arm64</strong></div>
           </div>
         </div>
       </section>
@@ -173,21 +174,21 @@
       <section class="section section-install" id="install" aria-labelledby="install-title">
         <div class="shell install-panel">
           <p class="section-number">05 / INSTALL</p>
-          <h2 id="install-title" data-ja="30秒で始める。" data-en="Start in 30 seconds.">30秒で始める。</h2>
-          <p data-ja="Go、GitHub Releases、Docker。環境に合う方法を選べます。" data-en="Choose Go, GitHub Releases, or Docker—whichever fits your environment.">Go、GitHub Releases、Docker。環境に合う方法を選べます。</p>
+          <h2 id="install-title" data-i18n="installTitle">すぐに始める。</h2>
+          <p data-i18n="installLead">Go、GitHub Releases、Docker。環境に合う方法を選べます。</p>
           <div class="install-options">
             <article>
               <span>GO</span>
-              <div class="command-row"><code>go install github.com/scenario-test-framework/logfilter@latest</code><button type="button" data-copy="go install github.com/scenario-test-framework/logfilter@latest" aria-label="コマンドをコピー" data-aria-ja="コマンドをコピー" data-aria-en="Copy command">⧉</button></div>
+              <div class="command-row"><code>go install github.com/scenario-test-framework/logfilter@latest</code><button type="button" data-copy="go install github.com/scenario-test-framework/logfilter@latest" aria-label="コマンドをコピー" data-i18n-aria="copyCommand">⧉</button></div>
             </article>
             <article>
               <span>DOCKER</span>
-              <div class="command-row"><code>docker pull ghcr.io/scenario-test-framework/logfilter:latest</code><button type="button" data-copy="docker pull ghcr.io/scenario-test-framework/logfilter:latest" aria-label="コマンドをコピー" data-aria-ja="コマンドをコピー" data-aria-en="Copy command">⧉</button></div>
+              <div class="command-row"><code>docker pull ghcr.io/scenario-test-framework/logfilter:latest</code><button type="button" data-copy="docker pull ghcr.io/scenario-test-framework/logfilter:latest" aria-label="コマンドをコピー" data-i18n-aria="copyCommand">⧉</button></div>
             </article>
           </div>
           <div class="install-actions">
-            <a class="button button-primary" href="https://github.com/scenario-test-framework/logfilter/releases/latest" data-ja="最新版をダウンロード" data-en="Download the latest release">最新版をダウンロード</a>
-            <a class="button button-secondary" href="https://github.com/scenario-test-framework/logfilter/blob/master/README.ja.md" data-href-ja="https://github.com/scenario-test-framework/logfilter/blob/master/README.ja.md" data-href-en="https://github.com/scenario-test-framework/logfilter/blob/master/README.md" data-ja="ドキュメントを読む" data-en="Read the documentation">ドキュメントを読む</a>
+            <a class="button button-primary" href="https://github.com/scenario-test-framework/logfilter/releases/latest" data-i18n="downloadLatest">最新版をダウンロード</a>
+            <a class="button button-secondary" href="https://github.com/scenario-test-framework/logfilter/blob/master/README.ja.md" data-i18n="readDocs" data-i18n-href="docsUrl">ドキュメントを読む</a>
           </div>
           <p class="copy-status" aria-live="polite"></p>
         </div>
@@ -196,7 +197,7 @@
 
     <footer class="site-footer">
       <div class="shell footer-layout">
-        <div><a class="brand" href="#top"><span>log</span><strong>filter</strong></a><p data-ja="必要なログだけ、瞬時に。" data-en="Find the logs that matter. Instantly.">必要なログだけ、瞬時に。</p></div>
+        <div><a class="brand" href="#top"><span>log</span><strong>filter</strong></a><p data-i18n="footerTagline">必要なログだけ、瞬時に。</p></div>
         <div class="footer-links"><a href="https://github.com/scenario-test-framework/logfilter">GitHub</a><a href="https://github.com/scenario-test-framework/logfilter/releases">Releases</a><a href="https://github.com/scenario-test-framework/logfilter/blob/master/LICENSE">Apache-2.0</a></div>
       </div>
     </footer>
