@@ -1,208 +1,221 @@
 # logfilter
 
+English | [日本語](./README.ja.md)
+
 [![CI](https://github.com/scenario-test-framework/logfilter/actions/workflows/ci.yaml/badge.svg)](https://github.com/scenario-test-framework/logfilter/actions/workflows/ci.yaml)
+[![Release](https://img.shields.io/github/v/release/scenario-test-framework/logfilter)](https://github.com/scenario-test-framework/logfilter/releases/latest)
+[![Go version](https://img.shields.io/github/go-mod/go-version/scenario-test-framework/logfilter)](./go.mod)
+[![Container](https://img.shields.io/badge/container-ghcr.io-blue?logo=docker)](https://github.com/scenario-test-framework/logfilter/pkgs/container/logfilter)
+[![License](https://img.shields.io/github/license/scenario-test-framework/logfilter)](./LICENSE)
 
-## 概要
+![logfilter: extract matching events from large log streams](./docs/assets/social-preview.png)
 
-大容量のログファイルから、期間やログレベル、文言を指定して、必要なログイベントを抽出するCUIツールです。
+`logfilter` extracts the log events you need from large files by time range, log level, text, or regular expression. It preserves multiline events such as stack traces and supports common Japanese character encodings in addition to UTF-8.
 
-Go 製の単一バイナリで動作します (旧 Java 実装から CLI 互換でリライト)。
+It is distributed as a single Go binary and maintains command-line compatibility with the original Java implementation.
 
+## Features
 
-## 機能
+- Filter log events by time range, log level, substring, or [RE2 regular expression](https://github.com/google/re2/wiki/Syntax).
+- Keep continuation lines, including stack traces, together with the preceding timestamped event.
+- Read and write UTF-8, Shift_JIS (CP932), EUC-JP, ISO-2022-JP, and UTF-16, including common encoding aliases.
+- Run as a native binary or a multi-architecture container image.
+- Reuse JSON configuration while overriding individual settings from the command line.
 
-### ログファイルのフィルタリング
+## Quick start
 
-指定のログフォーマットで出力されているログファイルから
-期間、ログレベル、文字列、正規表現 を指定して、マッチするログイベントだけのファイルを作成します。
+Install the latest release with Go:
 
-タイムスタンプで始まらない行 (スタックトレースなど) は、直前のログイベントの継続行として扱います。
+```sh
+go install github.com/scenario-test-framework/logfilter@latest
+```
 
-* 対応しているログフォーマット
-    * apache access log形式
-        * サンプル
+Extract `WARN` and `ERROR` events from a log file:
 
-            ```
-            127.0.0.1 - name [10/Oct/2000:13:55:36 +0900] "GET /apache_pb.gif HTTP/1.0" 200 2326
-            ```
+```sh
+logfilter -l 'WARN,ERROR' ./app.log ./filtered.log
+```
 
-    * 「タイムスタンプ ログレベル メッセージ」形式
-        * タイムスタンプ
-            * 日付
-                * 「yyyy/MM/dd」, 「yy/MM/dd」
-                * 「yyyy-MM-dd」, 「yy-MM-dd」
-                * 「yyyyMMdd」
-            * 日付時刻セパレータ
-                * 「 （半角スペース）」
-                * 「T」
-            * 時刻
-                * 「なし」
-                * 「HH:mm」, 「HH:mm:ss」
-                * 「HH:mm:ss.SSS」, 「HH:mm:ss,SSS」
-        * タイムゾーン
-            * 「なし」
-            * 「+0900」
-            * 「+0900:」
-        * ログレベル
-            * 前提
-                * タイムスタンプとの区切りが「半角スペース」
-                * ログレベルを「半角スペース」か「大カッコ」でくくっている
-            * 形式
-                * 任意（TRACE～ERROR、FINEST〜FATAL etc）
-        * サンプル
+You can also run the container image without installing the binary:
 
-            ```
-            2016-11-06 12:17:53.985 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : START validate
-            2016-11-06 12:17:54.022 DEBUG 15765 [      main] m.s.t.l.i.p.BaseLayerSuperType : END   validate
-            2016-11-06 12:17:54.022 ERROR 15765 [      main] m.s.t.l.s.LogFilterServiceTest : [error.validate]妥当性チェックエラーが発生しました。
-            LogFilterServiceInput.timeFilterValueFrom:日時に変換できません。 設定値=unmatched date format
-            LogFilterServiceInput.outputCharset:サポートされていない文字コードです。 設定値=NotExist2
-            LogFilterServiceInput.inputCharset:サポートされていない文字コードです。 設定値=NotExist
-            LogFilterServiceInput.inputFilePath:存在しないパスです。 設定値=/path/to/input
-            ```
+```sh
+docker run --rm \
+  -u "$(id -u):$(id -g)" \
+  -v "$PWD:/work" \
+  ghcr.io/scenario-test-framework/logfilter:latest \
+  -l 'WARN,ERROR' /work/app.log /work/filtered.log
+```
 
-* 対応している文字コード
-    * UTF-8 / Shift_JIS (CP932) / EUC-JP / ISO-2022-JP / UTF-16 と、それぞれの別名 (`utf8`, `sjis`, `MS932` など)
+## Typical workflow
 
+1. Prepare a log file whose events start with either an Apache access-log timestamp or a supported date/time value. Lines without a timestamp are treated as continuations of the preceding event.
+2. Choose one or more filters. For example, combine a time range with `-tf` and `-tt`, select levels with `-l`, or search event content with `-s` or `-r`.
+3. Run `logfilter`, specifying the input and output paths. You may omit the output positional argument only when `outputFilePath` is set in a configuration file.
+4. Read the filtered file. A successful match exits with code `0`; no matching events exits with code `3`; invalid input or another error exits with code `6`.
 
-## インストール
+For example:
 
-* GitHub Releases からお使いのプラットフォームのアーカイブをダウンロードして展開
+```sh
+logfilter \
+  -tf '2016-11-06 12:17:53.000' \
+  -tt '2016-11-06 12:18:00.000' \
+  -l 'WARN,ERROR' \
+  ./app.log ./filtered.log
+```
 
-    ``` sh
-    tar xvfz ./logfilter_*.tar.gz
-    mv ./logfilter_*/logfilter /usr/local/bin/
-    ```
+## Supported log formats
 
-* または Go でビルド
+### Apache access logs
 
-    ``` sh
-    go install github.com/scenario-test-framework/logfilter@latest
-    ```
+```text
+127.0.0.1 - name [10/Oct/2000:13:55:36 +0900] "GET /apache_pb.gif HTTP/1.0" 200 2326
+```
 
-* または Docker で実行 (インストール不要)
+### Timestamp, log level, and message
 
-    ``` sh
-    docker pull ghcr.io/scenario-test-framework/logfilter:latest
-    ```
+The parser accepts the following timestamp components:
 
+- Date: `yyyy/MM/dd`, `yy/MM/dd`, `yyyy-MM-dd`, `yy-MM-dd`, or `yyyyMMdd`
+- Date/time separator: a space or `T`
+- Time: omitted, `HH:mm`, `HH:mm:ss`, `HH:mm:ss.SSS`, or `HH:mm:ss,SSS`
+- Time zone: ISO timestamps using the `T` separator accept `Z` or a numeric offset such as `+09`, `+0900`, or `+09:00`. Apache access-log timestamps include an offset. Space-separated timestamps are interpreted in the local time zone.
 
-## 使い方
+The log level is recognized when it appears between spaces, such as ` ERROR `, or immediately after `[`, such as `[ERROR]`. Level names are not restricted to a fixed set, so values such as `TRACE`, `ERROR`, `FINEST`, and `FATAL` are supported.
 
-``` sh
+```text
+2016-11-06 12:17:53.985 DEBUG 15765 [main] Example : Starting validation
+2016-11-06 12:17:54.022 ERROR 15765 [main] Example : Validation failed
+The second line of this event has no timestamp.
+```
+
+## Installation
+
+### GitHub Releases
+
+Download the archive for your platform from [GitHub Releases](https://github.com/scenario-test-framework/logfilter/releases/latest), then extract and install the binary:
+
+```sh
+tar xvfz ./logfilter_*.tar.gz
+mv ./logfilter_*/logfilter /usr/local/bin/
+```
+
+### Go
+
+```sh
+go install github.com/scenario-test-framework/logfilter@latest
+```
+
+### Docker
+
+```sh
+docker pull ghcr.io/scenario-test-framework/logfilter:latest
+```
+
+## Usage
+
+```text
 logfilter [OPTION] inputFilePath [outputFilePath]
 ```
 
-``` sh
-# ヘルプ
+Examples:
+
+```sh
+# Show help
 logfilter -h
 
-# 期間で抽出
+# Filter by time range
 logfilter -tf '2016-11-06 12:17:53.000' -tt '2016-11-06 12:18:00.000' ./app.log ./filtered.log
 
-# ログレベルで抽出
+# Filter by log level
 logfilter -l 'WARN,ERROR' ./app.log ./filtered.log
 
-# 文字列・正規表現で抽出
+# Filter by substring or regular expression
 logfilter -s 'Exception' ./app.log ./filtered.log
 logfilter -r 'ERROR|Exception' ./app.log ./filtered.log
 
-# 設定ファイル + コマンドオプションで上書き
+# Load a configuration file and override one value
 logfilter -cf ./config.json -tf '2016-11-06' ./app.log ./filtered.log
 ```
 
-### オプション
+### Options
 
-| オプション | 説明 |
+| Option | Description |
 |---|---|
-| `-h`, `--help` | usage を表示します。 |
-| `-f`, `--force` | 出力ファイルパスが存在する場合の確認を表示しません。 |
-| `-cf`, `--configFile` | 設定ファイル (JSON) のパスを指定します。 |
-| `-ic`, `--inputCharset` | 入力ファイルの文字コード。デフォルトは UTF-8。 |
-| `-oc`, `--outputCharset` | 出力ファイルの文字コード。デフォルトは入力と同じ。 |
-| `-tf`, `--timeFilterFrom` | 抽出を開始する時刻 (この時刻を含む)。 |
-| `-tt`, `--timeFilterTo` | 抽出を終了する時刻 (この時刻を含まない)。 |
-| `-l`, `--logLevelFilter` | 抽出するログレベル (カンマ区切り)。 |
-| `-s`, `--stringContentFilter` | 抽出する文字列 (部分一致)。 |
-| `-r`, `--regexFilter` | 抽出する正規表現 ([RE2構文](https://github.com/google/re2/wiki/Syntax))。 |
+| `-h`, `--help` | Show command usage. |
+| `-f`, `--force` | Do not ask for confirmation before overwriting an existing output file. |
+| `-cf`, `--configFile` | Read settings from a JSON configuration file. |
+| `-ic`, `--inputCharset` | Input encoding. The default is UTF-8. |
+| `-oc`, `--outputCharset` | Output encoding. The default is the input encoding. |
+| `-tf`, `--timeFilterFrom` | Include events at or after this time. |
+| `-tt`, `--timeFilterTo` | Exclude events at or after this time. |
+| `-l`, `--logLevelFilter` | Comma-separated log levels to include. |
+| `-s`, `--stringContentFilter` | Substring that the event must contain. |
+| `-r`, `--regexFilter` | RE2 regular expression that the event must match. |
 
-### 設定ファイル
+### Configuration file
 
-``` json
+```json
 {
-    "inputCharset": "UTF-8",
-    "outputFilePath": "",
-    "outputCharset": "",
-    "timeFilterValueFrom": "",
-    "timeFilterValueTo": "",
-    "logLevelFilterValueList": ["WARN", "ERROR"],
-    "stringContentFilterValue": "",
-    "regexFilterValue": ""
+  "inputCharset": "UTF-8",
+  "outputFilePath": "",
+  "outputCharset": "",
+  "timeFilterValueFrom": "",
+  "timeFilterValueTo": "",
+  "logLevelFilterValueList": ["WARN", "ERROR"],
+  "stringContentFilterValue": "",
+  "regexFilterValue": ""
 }
 ```
 
-* 入力ファイルパスは常にコマンドの位置引数で指定します (設定ファイルでは指定できません)。
-* 出力ファイルパスは、位置引数を省略した場合に設定ファイルの `outputFilePath` が使用されます。
+The input file is always supplied as a positional command-line argument. When the output positional argument is omitted, `outputFilePath` from the configuration file is used.
 
-### リターンコード
+Command-line filter and encoding options override corresponding values from the configuration file.
 
-| コード | 意味 |
+### Exit codes
+
+| Code | Meaning |
 |---|---|
-| 0 | 正常終了 |
-| 3 | 警告終了 (フィルタにマッチするログイベントなし) |
-| 6 | エラー終了 |
+| `0` | Completed successfully. |
+| `3` | Completed with no matching log events. |
+| `6` | Failed because of invalid input or another error. |
 
-### Docker で実行
+## Running with Docker
 
-``` sh
-# カレントディレクトリのログをフィルタリング
+Mount the directory containing your logs into `/work`. Set `TZ` when timestamps without an explicit offset should be interpreted in a local time zone; otherwise, they are interpreted as UTC.
+
+```sh
 docker run --rm \
-    -u "$(id -u):$(id -g)" \
-    -e TZ=Asia/Tokyo \
-    -v "$PWD:/work" \
-    ghcr.io/scenario-test-framework/logfilter:latest \
-    -l 'WARN,ERROR' /work/app.log /work/filtered.log
+  -u "$(id -u):$(id -g)" \
+  -e TZ=Asia/Tokyo \
+  -v "$PWD:/work" \
+  ghcr.io/scenario-test-framework/logfilter:latest \
+  -l 'WARN,ERROR' /work/app.log /work/filtered.log
 ```
 
-* `-e TZ=...` : タイムゾーンなしのタイムスタンプ (`yyyy-MM-dd HH:mm:ss` 等) の解釈に使用します。未指定の場合は UTC として解釈されます。
-* `-u "$(id -u):$(id -g)"` : 出力ファイルの所有者をホストの実行ユーザーに合わせます。
+Using the host user and group with `-u "$(id -u):$(id -g)"` ensures that the output file is owned by the current host user.
 
-docker compose の場合 ([compose.yaml](./compose.yaml)):
+With [Docker Compose](./compose.yaml):
 
-``` sh
+```sh
 docker compose run --rm logfilter -l 'WARN,ERROR' /work/logs/app.log /work/logs/filtered.log
 ```
 
+## Development
 
-## Tips
+Go 1.25 or later is required.
 
-1. 設定をまとめたファイルを指定＋コマンドで上書きして実行することができます。
-下記のように、ルーティン作業を簡素化することも可能です。
-    * 設定ファイルで ログレベル：WARN以上 に絞る設定をしておき、コマンドで対象ログファイルを指定する
-    * 設定ファイルで 出力先や文字コード を指定しておき、コマンドで期間を今日に絞る
-
-1. 特定の絞り込み条件を指定したコマンドをalias登録しておき、パスだけ指定して動かすこともできます。
-
-
-## 開発
-
-``` sh
-make        # vet + test + build
-make cross  # 配布用クロスコンパイル (dist/)
+```sh
+make        # vet, test, and build
+make cross  # build release archives in dist/
 ```
 
-* 前提: Go 1.25+
-
-### CI/CD
-
-| ワークフロー | トリガー | 内容 |
+| Workflow | Trigger | Purpose |
 |---|---|---|
-| [CI](./.github/workflows/ci.yaml) | push / pull_request | vet + test + build + docker build 検証 |
-| [Release](./.github/workflows/release.yaml) | `v*` タグ push | 配布アーカイブを GitHub Releases に添付 + マルチアーチイメージ (amd64/arm64) を GHCR に公開 |
+| [CI](./.github/workflows/ci.yaml) | Push or pull request | Vet, test, compile, and verify the container build. |
+| [Release](./.github/workflows/release.yaml) | Push of a `v*` tag | Publish release archives and amd64/arm64 container images. |
 
-リリース手順:
+Internal development documentation and source-code comments are primarily written in Japanese.
 
-``` sh
-git tag v2.0.0
-git push origin v2.0.0
-```
+## License
+
+Licensed under the [Apache License 2.0](./LICENSE).
