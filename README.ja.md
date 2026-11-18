@@ -199,7 +199,7 @@ make        # vet + test + build
 make cross  # 配布用クロスコンパイル (dist/)
 ```
 
-* 前提: Go 1.25+
+* 前提: Go 1.26+
 
 ### CI/CD
 

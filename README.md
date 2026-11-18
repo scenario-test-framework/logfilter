@@ -202,7 +202,7 @@ docker compose run --rm logfilter -l 'WARN,ERROR' /work/logs/app.log /work/logs/
 
 ## Development
 
-Go 1.25 or later is required.
+Go 1.26 or later is required.
 
 ```sh
 make        # vet, test, and build
