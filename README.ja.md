@@ -24,7 +24,7 @@ Go 製の単一バイナリで動作します (旧 Java 実装から CLI 互換�
 指定のログフォーマットで出力されているログファイルから
 期間、ログレベル、文字列、正規表現 を指定して、マッチするログイベントだけのファイルを作成します。
 
-タイムスタンプで始まらない行 (スタックトレースなど) は、直前のログイベントの継続行として扱います。
+既定のテキスト形式では、タイムスタンプで始まらない行 (スタックトレースなど) を直前のログイベントの継続行として扱います。JSON Lines と logfmt では、指定したフィールドからタイムスタンプとログレベルを読み取れます。
 
 * 対応しているログフォーマット
     * apache access log形式
@@ -69,9 +69,30 @@ Go 製の単一バイナリで動作します (旧 Java 実装から CLI 互換�
             LogFilterServiceInput.inputFilePath:存在しないパスです。 設定値=/path/to/input
             ```
 
+    * 構造化ログ形式 (JSON Lines / logfmt)
+        * JSON Lines は `-lf json`、logfmt は `-lf logfmt` で指定します。
+
 * 対応している文字コード
     * UTF-8 / Shift_JIS (CP932) / EUC-JP / ISO-2022-JP / UTF-16 と、それぞれの別名 (`utf8`, `sjis`, `MS932` など)
 
+### 構造化ログ (JSON Lines / logfmt)
+
+同じイベントを JSON Lines と logfmt で表すと、次のようになります。
+
+```json
+{"time":"2024-01-01T00:00:01Z","level":"warn","msg":"retry stopped"}
+```
+
+```text
+time=2024-01-01T00:00:01Z level=warn msg="retry stopped"
+```
+
+JSON Lines では1行に1つの JSON オブジェクトを書きます。logfmt ではフィールドを空白で区切ります。ダブルクォートで囲んだ値は空白とエスケープ (`\"`、`\\`、`\n`、`\r`、`\t`) を含められます。引用符なしの値に `=` や `"` を含む行は解析できない行 (継続行) になります。`key=` は空の値を表します。`=` の無い単独の `key` は無視するため、平文の継続行に含まれる `time` のような単語をフィールドと誤認しません。
+
+- **タイムスタンプのキー**は `time`、`timestamp`、`ts`、`@timestamp` の順に探し、最初に存在したものを使います。`-tk` を指定すると、そのキーだけを使います。たとえば `-tk log.ts` は、JSON ではまず `log.ts` という名前のキーを探し、次に `log` オブジェクト内の `ts` を探します。各階層で残りのパス全体と一致するキーを優先し、その後に短い接頭辞から順にオブジェクトをたどります。logfmt ではドットもキー名の一部です。`-lk` の指定も同じ規則です。
+- **日時形式**の既定値は `auto` です。数字だけの文字列 (先頭の `-` と小数部を含んでよい) は Unix 時刻として扱います。ただし8桁の整数の文字列が暦日として正しければ `yyyyMMdd` と解釈し、たとえば `"20240101"` はローカルタイムの2024年1月1日になります。`"20240230"` のように暦日として正しくない8桁の文字列は Unix 秒として扱います。それ以外の文字列は対応する日時形式で解釈します。JSON 数値は Unix 時刻として扱います。整数部の絶対値が `1e11` 未満なら秒、`1e14` 未満ならミリ秒、`1e17` 未満ならマイクロ秒、それ以上ならナノ秒です。`-tfmt` に `unix`、`unixms`、`unixus`、`unixns` を指定すると、8桁の文字列も含めて単位を固定できます。いずれも小数に対応し、ナノ秒までの精度を保持します。0001〜9999年の範囲外になる Unix 時刻は変換できない値として扱います。
+- **イベントの区切り**は、有効なタイムスタンプを持つ行です。解析できない行、JSON オブジェクト以外の行、指定のキーを含まない行は、直前のイベントの継続行になります。1行目にはイベントの先頭行が必要です。キーが存在しても値を日時に変換できない場合は、行番号と値を表示して終了コード `6` で停止します。出力は各行の元の表記を保ちます。文字列・正規表現フィルタは継続行を含むイベント全文が対象です。
+- **ログレベル**はイベントの先頭行で `level`、`severity`、`lvl` の順に最初に存在するキー、または `-lk` で指定したキーから取得します。値が文字列または数値なら、大文字小文字を区別せずに `-l` の各指定値と完全一致で比較します。キーがない場合や値がそれ以外の型の場合は、従来どおりイベント全文で ` LEVEL ` または `[LEVEL` を大文字小文字を区別して検索します。Docker の json-file 形式でも `log` 内に書かれたレベルをこの方法で抽出できます。
 
 ## インストール
 
@@ -111,6 +132,12 @@ logfilter -tf '2016-11-06 12:17:53.000' -tt '2016-11-06 12:18:00.000' ./app.log 
 # ログレベルで抽出
 logfilter -l 'WARN,ERROR' ./app.log ./filtered.log
 
+# logfmt の既定のキーで WARN を抽出
+logfilter -lf logfmt -l WARN ./app.logfmt ./filtered.log
+
+# JSON Lines 内のネストした Unix ミリ秒とログレベルを使用
+logfilter -lf json -tk log.ts -tfmt unixms -lk log.level -l ERROR ./app.jsonl ./filtered.jsonl
+
 # 文字列・正規表現で抽出
 logfilter -s 'Exception' ./app.log ./filtered.log
 logfilter -r 'ERROR|Exception' ./app.log ./filtered.log
@@ -128,6 +155,10 @@ logfilter -cf ./config.json -tf '2016-11-06' ./app.log ./filtered.log
 | `-cf`, `--configFile` | 設定ファイル (JSON) のパスを指定します。 |
 | `-ic`, `--inputCharset` | 入力ファイルの文字コード。デフォルトは UTF-8。 |
 | `-oc`, `--outputCharset` | 出力ファイルの文字コード。デフォルトは入力と同じ。 |
+| `-lf`, `--logFormat` | 入力ログの形式。`text` (既定)、`json` (JSON Lines)、`logfmt`。 |
+| `-tk`, `--timestampKey` | 構造化ログのタイムスタンプキー。省略時は既定候補を順に探索。 |
+| `-tfmt`, `--timestampFormat` | 構造化ログの日時形式。`auto` (既定)、`unix`、`unixms`、`unixus`、`unixns`。 |
+| `-lk`, `--logLevelKey` | 構造化ログのレベルキー。省略時は既定候補を順に探索。 |
 | `-tf`, `--timeFilterFrom` | 抽出を開始する時刻 (この時刻を含む)。 |
 | `-tt`, `--timeFilterTo` | 抽出を終了する時刻 (この時刻を含まない)。 |
 | `-l`, `--logLevelFilter` | 抽出するログレベル (カンマ区切り)。 |
@@ -151,6 +182,18 @@ logfilter -cf ./config.json -tf '2016-11-06' ./app.log ./filtered.log
 
 * 入力ファイルパスは常にコマンドの位置引数で指定します (設定ファイルでは指定できません)。
 * 出力ファイルパスは、位置引数を省略した場合に設定ファイルの `outputFilePath` が使用されます。
+
+`{"log":{"ts":1704067200123,"level":"error"}}` のような JSON Lines には、次の設定を使えます。`timestampKey`、`timestampFormat`、`logLevelKey` は `json` または `logfmt` のときだけ指定できます。空でないコマンドラインオプションは、対応する設定ファイルの値を上書きします。
+
+```json
+{
+    "logFormat": "json",
+    "timestampKey": "log.ts",
+    "timestampFormat": "unixms",
+    "logLevelKey": "log.level",
+    "logLevelFilterValueList": ["ERROR"]
+}
+```
 
 ### リターンコード
 

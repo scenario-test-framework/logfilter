@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 	"time"
 
@@ -20,6 +21,7 @@ import (
 
 	"github.com/scenario-test-framework/logfilter/internal/charset"
 	"github.com/scenario-test-framework/logfilter/internal/config"
+	"github.com/scenario-test-framework/logfilter/internal/structured"
 	"github.com/scenario-test-framework/logfilter/internal/timeparse"
 )
 
@@ -39,11 +41,16 @@ type Result struct {
 
 // filters はパース済みのフィルタ設定。
 type filters struct {
-	from      *time.Time
-	to        *time.Time
-	logLevels []string
-	content   string
-	regex     *regexp.Regexp
+	cfg   *config.Config
+	from  *time.Time
+	to    *time.Time
+	regex *regexp.Regexp
+}
+
+// eventHeader はイベントの先頭行から読み取った情報です。
+type eventHeader struct {
+	timestamp time.Time
+	record    structured.Record
 }
 
 // Run は設定に従ってフィルタリングを実行します。
@@ -54,10 +61,7 @@ func Run(cfg *config.Config) (Result, error) {
 	// ----------------------------------------
 	// フィルタ設定のパース
 	// ----------------------------------------
-	f := filters{
-		logLevels: cfg.LogLevelFilterValueList,
-		content:   cfg.StringContentFilterValue,
-	}
+	f := filters{cfg: cfg}
 	if cfg.TimeFilterValueFrom != "" {
 		t, err := timeparse.Parse(cfg.TimeFilterValueFrom)
 		if err != nil {
@@ -152,13 +156,14 @@ func Run(cfg *config.Config) (Result, error) {
 // filterLines は入力を行単位で読み込み、イベント単位でフィルタを適用して出力します。
 func filterLines(reader *bufio.Reader, writer *bufio.Writer, f *filters, result *Result) error {
 	var event []string
+	var header eventHeader
 
 	// イベントを評価し、マッチする場合に出力する
 	flush := func() error {
 		if len(event) == 0 {
 			return nil
 		}
-		write, err := f.match(event)
+		write, err := f.match(event, header)
 		if err != nil {
 			return err
 		}
@@ -189,19 +194,21 @@ func filterLines(reader *bufio.Reader, writer *bufio.Writer, f *filters, result 
 			log.Printf("INFO  %d rows finished.", result.InputRows)
 		}
 
-		// 1行目でログフォーマットを確認
-		if result.InputRows == 1 {
-			if _, err := lineTimestamp(line); err != nil {
-				return fmt.Errorf("ログイベントからタイムスタンプを検出できませんでした。対象文字列：%s", line)
-			}
+		next, starts, err := f.parseHeader(line, result.InputRows == 1)
+		if err != nil {
+			return fmt.Errorf("%d 行目の%w", result.InputRows, err)
+		}
+		if !starts && result.InputRows == 1 {
+			return fmt.Errorf("ログイベントからタイムスタンプを検出できませんでした。対象文字列：%s", line)
 		}
 
-		if result.InputRows != 1 && isEventStart(line) {
+		if starts {
 			// ログイベントが切り替わる行の場合、蓄積したイベントを評価して出力
 			if err := flush(); err != nil {
 				return err
 			}
 			event = event[:0]
+			header = next
 		}
 		event = append(event, line)
 
@@ -214,21 +221,36 @@ func filterLines(reader *bufio.Reader, writer *bufio.Writer, f *filters, result 
 	return flush()
 }
 
-// isEventStart はログイベントが切り替わった行か否かを返します。
-func isEventStart(line string) bool {
-	_, err := lineTimestamp(line)
-	return err == nil
+// parseHeader はイベントの先頭行を認識し、構造化ログでは解析済みの日時とフィールドを保持します。
+// first は入力の 1 行目か否か。構造化ログでは 1 行目に限り、解析用の文字列から UTF-8 の BOM を除きます
+// (出力には元の行を使う)。
+func (f *filters) parseHeader(line string, first bool) (eventHeader, bool, error) {
+	if f.cfg.LogFormat == "" || f.cfg.LogFormat == "text" {
+		_, err := lineTimestamp(line)
+		return eventHeader{}, err == nil, nil
+	}
+	if first {
+		line = strings.TrimPrefix(line, "\ufeff")
+	}
+	record := structured.Parse(f.cfg.LogFormat, line)
+	ts, found, err := record.Timestamp(f.cfg.TimestampKey, f.cfg.TimestampFormat)
+	return eventHeader{timestamp: ts, record: record}, found, err
 }
 
 // match は指定されたフィルタを適用して、出力するべきイベントか否かを返します。
-func (f *filters) match(event []string) (bool, error) {
+func (f *filters) match(event []string, header eventHeader) (bool, error) {
 	eventValue := strings.Join(event, "\n") + "\n"
 
 	// TimeFilter
 	if f.from != nil || f.to != nil {
-		ts, err := lineTimestamp(eventValue)
-		if err != nil {
-			return false, fmt.Errorf("ログイベントからタイムスタンプを検出できませんでした。対象文字列：%s", event[0])
+		ts := header.timestamp
+		if header.record == nil {
+			// テキスト形式では旧版と同様に、イベント全文から比較用の日時を取得する。
+			var err error
+			ts, err = lineTimestamp(eventValue)
+			if err != nil {
+				return false, fmt.Errorf("ログイベントからタイムスタンプを検出できませんでした。対象文字列：%s", event[0])
+			}
 		}
 		switch {
 		case f.from != nil && f.to == nil:
@@ -257,21 +279,12 @@ func (f *filters) match(event []string) (bool, error) {
 	}
 
 	// LogLevelFilter
-	if len(f.logLevels) > 0 {
-		matched := false
-		for _, level := range f.logLevels {
-			if strings.Contains(eventValue, " "+level+" ") || strings.Contains(eventValue, "["+level) {
-				matched = true
-				break
-			}
-		}
-		if !matched {
-			return false, nil
-		}
+	if len(f.cfg.LogLevelFilterValueList) > 0 && !f.matchLevel(eventValue, header.record) {
+		return false, nil
 	}
 
 	// StringContentFilter
-	if f.content != "" && !strings.Contains(eventValue, f.content) {
+	if f.cfg.StringContentFilterValue != "" && !strings.Contains(eventValue, f.cfg.StringContentFilterValue) {
 		return false, nil
 	}
 
@@ -281,6 +294,22 @@ func (f *filters) match(event []string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+// matchLevel は構造化フィールドを優先し、値が取得できない場合はイベント全文を検索します。
+func (f *filters) matchLevel(eventValue string, record structured.Record) bool {
+	levels := f.cfg.LogLevelFilterValueList
+	if record != nil {
+		if value, ok := record.Level(f.cfg.LogLevelKey); ok {
+			return slices.ContainsFunc(levels, func(level string) bool { return strings.EqualFold(value, level) })
+		}
+	}
+	for _, level := range levels {
+		if strings.Contains(eventValue, " "+level+" ") || strings.Contains(eventValue, "["+level) {
+			return true
+		}
+	}
+	return false
 }
 
 // lineTimestamp は行頭 1〜5 フィールド (半角スペース区切り) から

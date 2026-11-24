@@ -48,6 +48,19 @@ OPTION
     出力ファイルの文字コードを指定します。
     デフォルトは、入力ファイルと同じ文字コードです。
 
+  -lf, --logFormat
+    入力ログの形式を text (既定)、json (JSON Lines)、logfmt から指定します。
+
+  -tk, --timestampKey
+    構造化ログのタイムスタンプキーを指定します。JSON のネストはドット区切りです。
+    既定では time、timestamp、ts、@timestamp の順に探します。
+
+  -tfmt, --timestampFormat
+    構造化ログの日時形式を auto (既定)、unix、unixms、unixus、unixns から指定します。
+
+  -lk, --logLevelKey
+    構造化ログのレベルキーを指定します。既定では level、severity、lvl の順に探します。
+
   -tf, --timeFilterFrom
     クォートで括った、指定のフォーマットで、抽出を開始する時刻を指定します。
     timeFilterTo と一緒に設定すると、AND条件で動作します。
@@ -79,6 +92,10 @@ type options struct {
 	forceOverwrite      bool
 	inputCharset        string
 	outputCharset       string
+	logFormat           string
+	timestampKey        string
+	timestampFormat     string
+	logLevelKey         string
 	timeFilterFrom      string
 	timeFilterTo        string
 	logLevelFilter      string
@@ -187,6 +204,14 @@ func registerFlags(fs *flag.FlagSet, opt *options) {
 	fs.StringVar(&opt.inputCharset, "inputCharset", "", "入力文字コード")
 	fs.StringVar(&opt.outputCharset, "oc", "", "出力文字コード")
 	fs.StringVar(&opt.outputCharset, "outputCharset", "", "出力文字コード")
+	fs.StringVar(&opt.logFormat, "lf", "", "ログ形式")
+	fs.StringVar(&opt.logFormat, "logFormat", "", "ログ形式")
+	fs.StringVar(&opt.timestampKey, "tk", "", "タイムスタンプキー")
+	fs.StringVar(&opt.timestampKey, "timestampKey", "", "タイムスタンプキー")
+	fs.StringVar(&opt.timestampFormat, "tfmt", "", "タイムスタンプ形式")
+	fs.StringVar(&opt.timestampFormat, "timestampFormat", "", "タイムスタンプ形式")
+	fs.StringVar(&opt.logLevelKey, "lk", "", "ログレベルキー")
+	fs.StringVar(&opt.logLevelKey, "logLevelKey", "", "ログレベルキー")
 	fs.StringVar(&opt.timeFilterFrom, "tf", "", "TimeFilter設定値: From")
 	fs.StringVar(&opt.timeFilterFrom, "timeFilterFrom", "", "TimeFilter設定値: From")
 	fs.StringVar(&opt.timeFilterTo, "tt", "", "TimeFilter設定値: To")
@@ -220,6 +245,18 @@ func buildConfig(opt *options, params []string) (*config.Config, error) {
 	}
 	if opt.outputCharset != "" {
 		cfg.OutputCharset = escapeQuote(opt.outputCharset)
+	}
+	if opt.logFormat != "" {
+		cfg.LogFormat = escapeQuote(opt.logFormat)
+	}
+	if opt.timestampKey != "" {
+		cfg.TimestampKey = escapeQuote(opt.timestampKey)
+	}
+	if opt.timestampFormat != "" {
+		cfg.TimestampFormat = escapeQuote(opt.timestampFormat)
+	}
+	if opt.logLevelKey != "" {
+		cfg.LogLevelKey = escapeQuote(opt.logLevelKey)
 	}
 	if opt.timeFilterFrom != "" {
 		cfg.TimeFilterValueFrom = escapeQuote(opt.timeFilterFrom)
@@ -271,6 +308,12 @@ func printConfig(cfg *config.Config) {
 	log.Print("INFO  ・入力ファイル")
 	log.Printf("INFO      ・パス      : %s", cfg.InputFilePath)
 	log.Printf("INFO      ・文字コード: %s", cfg.InputCharset)
+	if cfg.LogFormat == "json" || cfg.LogFormat == "logfmt" {
+		log.Printf("INFO      ・logFormat      : %s", cfg.LogFormat)
+		log.Printf("INFO      ・timestampKey   : %s", cfg.TimestampKey)
+		log.Printf("INFO      ・timestampFormat: %s", cfg.TimestampFormat)
+		log.Printf("INFO      ・logLevelKey    : %s", cfg.LogLevelKey)
+	}
 	log.Print("INFO  ・出力ファイル")
 	log.Printf("INFO      ・パス      : %s", cfg.OutputFilePath)
 	log.Printf("INFO      ・文字コード: %s", cfg.OutputCharset)

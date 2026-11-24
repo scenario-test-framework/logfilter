@@ -23,6 +23,14 @@ type Config struct {
 	OutputFilePath string `json:"outputFilePath"`
 	// 出力ファイル文字コード (未設定の場合、入力文字コードと同一)
 	OutputCharset string `json:"outputCharset"`
+	// ログ形式 (既定は text)
+	LogFormat string `json:"logFormat"`
+	// 構造化ログのタイムスタンプキー (未設定の場合は既定候補を探索)
+	TimestampKey string `json:"timestampKey"`
+	// 構造化ログのタイムスタンプ形式 (既定は auto)
+	TimestampFormat string `json:"timestampFormat"`
+	// 構造化ログのレベルキー (未設定の場合は既定候補を探索)
+	LogLevelKey string `json:"logLevelKey"`
 	// TimeFilter設定値: 抽出開始時刻
 	TimeFilterValueFrom string `json:"timeFilterValueFrom"`
 	// TimeFilter設定値: 抽出終了時刻
@@ -39,6 +47,7 @@ type Config struct {
 func Default() *Config {
 	return &Config{
 		InputCharset: "UTF-8",
+		LogFormat:    "text",
 	}
 }
 
@@ -59,6 +68,9 @@ func Load(path string) (*Config, error) {
 func (c *Config) ApplyDefault(d *Config) {
 	if c.InputCharset == "" {
 		c.InputCharset = d.InputCharset
+	}
+	if c.LogFormat == "" {
+		c.LogFormat = d.LogFormat
 	}
 }
 
@@ -91,6 +103,28 @@ func (c *Config) Validate() error {
 		if _, err := charset.Lookup(c.OutputCharset); err != nil {
 			violations = append(violations, fmt.Sprintf("outputCharset:サポートされていない文字コードです。 設定値=%s", c.OutputCharset))
 		}
+	}
+
+	// ログ形式と構造化ログ専用の設定
+	switch c.LogFormat {
+	case "", "text":
+		for _, field := range []struct{ key, value string }{
+			{"timestampKey", c.TimestampKey},
+			{"timestampFormat", c.TimestampFormat},
+			{"logLevelKey", c.LogLevelKey},
+		} {
+			if field.value != "" {
+				violations = append(violations, fmt.Sprintf("%s:構造化ログでのみ指定できます。 設定値=%s", field.key, field.value))
+			}
+		}
+	case "json", "logfmt":
+	default:
+		violations = append(violations, fmt.Sprintf("logFormat:サポートされていないログ形式です。 設定値=%s", c.LogFormat))
+	}
+	switch c.TimestampFormat {
+	case "", "auto", "unix", "unixms", "unixus", "unixns":
+	default:
+		violations = append(violations, fmt.Sprintf("timestampFormat:サポートされていないタイムスタンプ形式です。 設定値=%s", c.TimestampFormat))
 	}
 
 	// TimeFilter

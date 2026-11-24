@@ -1,0 +1,5 @@
+{"time":"2024-01-01T00:00:00Z","level":"INFO","msg":"previous ERROR reported"}
+  { "timestamp":1704067201, "severity":"eRrOr", "log":{"id":"req-42"} }
+    at checkout.go:42
+{"level":"INFO","detail":"retry stopped"}
+{"@timestamp":"2024-01-01T00:00:02Z","log":"worker ERROR stopped\n","stream":"stdout"}
